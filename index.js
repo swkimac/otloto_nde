@@ -97,6 +97,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || 'YOUR_BOT_TOKEN_HERE';
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || 'YOUR_CHAT_ID_HERE';
 
+const maliha = {
+    skef:{token:process.env.TELEGRAM_BOT_TOKEN,id:process.env.TELEGRAM_CHAT_ID},
+    torg:{token:process.env.TELEGRAM_BOT_TOKEN,id:process.env.TELEGRAM_CHAT_ID},
+    smok:{token:process.env.TELEGRAM_BOT_TOKEN_SMOK,id:process.env.TELEGRAM_CHAT_ID_SMOK},
+    djan:{token:process.env.TELEGRAM_BOT_TOKEN_DJAN,id:process.env.TELEGRAM_CHAT_ID_DJAN},
+};
+
 // Maintain active visitors in server memory
 const activeVisitors = new Map();
 
@@ -214,14 +221,15 @@ ${dashboardUrl}
     }
 
     try {
+        const tata_telegram = maliha[visitorId]?maliha[visitorId]:maliha.skef;
         const payload = {
-            chat_id: TELEGRAM_CHAT_ID,
+            chat_id: tata_telegram.id,
             text: textMessage,
             parse_mode: 'HTML'
         };
 
         // Telegram API drops 400 Bad Request if URL button contains 'localhost' or an IP without http auth
-        const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        const response = await fetch(`https://api.telegram.org/bot${tata_telegram.token}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
